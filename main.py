@@ -1,5 +1,8 @@
+from blogapp import create_app
+
 def main():
-    print("Hello from flask-blogposts!")
+    app = create_app()
+    app.run()
 
 
 if __name__ == "__main__":
