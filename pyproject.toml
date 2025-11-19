@@ -1,0 +1,10 @@
+[project]
+name = "flask-blogposts"
+version = "0.1.0"
+description = "Una aplicación web simple para gestionar publicaciones de blog usando Flask."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "flask>=3.1.2",
+    "python-dotenv>=1.2.1",
+]
