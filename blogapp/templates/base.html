@@ -24,43 +24,58 @@
                 </a>
 
                 <div class="text-end">
-                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light me-2">Iniciar sesión</a>
-                    <a href="{{ url_for('auth.register') }}" class="btn btn-warning">Registrate</a>
-
+                    {% if g.user %}
                     <a href="#" class="link-light text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
-                        <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+                        <img src="{% if g.user.avatar %}{{ g.user.avatar_url }}{% else %}{{ url_for('static', filename='img/user-light.png') }}{% endif %}"
+                            alt="mdo" width="32" height="32" class="rounded-circle">
                     </a>
                     <ul class="dropdown-menu text-small">
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
 
                         <li>
+                            <span class="dropdown-item d-flex align-items-center gap-2 py-2 fw-bold">Hola, {{
+                                g.user.username
+                                }}</span>
+                        </li>
+
                         <li><a class="dropdown-item d-flex align-items-center gap-2 py-2"
                                 href="{{ url_for('post.create') }}">
                                 <span class="d-inline-block bg-success rounded-circle p-1"></span>
                                 Crear Blog
                             </a>
                         </li>
-                        </li>
+
                         <li><a class="dropdown-item d-flex align-items-center gap-2 py-2"
                                 href="{{ url_for('post.posts') }}">
                                 <span class="d-inline-block bg-primary rounded-circle p-1"></span>
                                 Mis Blogs
                             </a>
                         </li>
+
                         <li><a class="dropdown-item d-flex align-items-center gap-2 py-2"
-                                href="{{ url_for('auth.profile') }}">
+                                href="{{ url_for('auth.profile', user_id=g.user.id) }}">
                                 <span class="d-inline-block bg-info rounded-circle p-1"></span>
                                 Perfil
                             </a>
                         </li>
+
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#">
+
+                        <li><a class="dropdown-item d-flex align-items-center gap-2 py-2"
+                                href="{{ url_for('auth.logout') }}">
                                 <span class="d-inline-block bg-danger rounded-circle p-1"></span>
                                 Cerrar sesión
                             </a>
                         </li>
                     </ul>
+                    {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light me-2">Iniciar sesión</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-warning">Registrate</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -70,6 +85,17 @@
     <!-- Sección de bienvenida -->
     {% block content %}
     {% block flash %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <hr class="my-4">
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
     {% endblock %}
     {% endblock %}
 
