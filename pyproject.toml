@@ -5,7 +5,9 @@ description = "Una aplicación web simple para gestionar publicaciones de blog u
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "cloudinary>=1.44.1",
     "flask>=3.1.2",
+    "flask-migrate>=4.1.0",
     "flask-sqlalchemy>=3.1.1",
     "psycopg2>=2.9.11",
     "python-dotenv>=1.2.1",
