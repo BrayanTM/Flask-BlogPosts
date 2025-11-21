@@ -8,3 +8,5 @@ class Config:
     DEBUG = os.getenv('DEBUG', 'False') == 'True'
     
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+
+    CKEDITOR_PKG_TYPE = 'full'
