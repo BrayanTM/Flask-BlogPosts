@@ -19,7 +19,9 @@
         ¡Únete a nuestra comunidad hoy y comienza a compartir tus ideas con el
         mundo!
       </p>
+      {% if not g.user %}
       <a href="{{ url_for('auth.register') }}" class="btn btn-outline-dark w-50 fs-3">Registrate</a>
+      {% endif %}
     </div>
     <div class="col-md-6">
       <img src="{{ url_for('static', filename='img/bloguer.jpg') }}" alt="Imagen de bienvenida" class="img-fluid" />
