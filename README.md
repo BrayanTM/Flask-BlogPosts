@@ -63,7 +63,7 @@ Flask-BlogPosts es una aplicación web moderna para la creación y gestión de b
 
 ## 📦 Requisitos Previos
 
-- Python 3.14 o superior
+- Python 3.11 o superior
 - PostgreSQL 18
 - Docker y Docker Compose (opcional)
 - Cuenta de Cloudinary
@@ -138,6 +138,11 @@ flask db upgrade
 **Modo desarrollo:**
 ```bash
 python main.py
+```
+
+O usando Flask CLI:
+```bash
+flask run
 ```
 
 La aplicación estará disponible en `http://localhost:5000`
@@ -310,12 +315,13 @@ npm install -g vercel
 - Actualiza `DATABASE_URL` con la URL de producción
 
 ⚠️ **Configuración de locale**:
-- Si hay problemas con `locale.setlocale`, considera usar alternativas como `babel` o manejar el error:
+- El proyecto incluye soporte para múltiples locales con fallback automático
+- Si el locale español no está disponible en producción, se usa el predeterminado del sistema
 ```python
 try:
     locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
-except:
-    pass  # Usar locale por defecto en producción
+except (locale.Error, ValueError):
+    pass  # Usar locale por defecto
 ```
 
 ⚠️ **DEBUG**:
@@ -327,6 +333,11 @@ except:
 import secrets
 print(secrets.token_hex(32))
 ```
+
+⚠️ **Pool de conexiones**:
+- El proyecto está configurado con `pool_pre_ping=True` para verificar conexiones
+- `pool_recycle=300` para evitar conexiones obsoletas
+- Configurado para entornos serverless con límites optimizados
 
 ### Estructura de archivos para Vercel
 
@@ -351,15 +362,21 @@ Después del despliegue, verifica:
 ### Troubleshooting
 
 **Error: "No module named 'psycopg2'"**
-- Solución: `requirements.txt` usa `psycopg2-binary` (ya configurado)
+- Solución: El proyecto usa `psycopg2-binary` en `requirements.txt` (ya configurado para Vercel)
 
 **Error: "Application failed to start"**
 - Verifica los logs en el dashboard de Vercel
 - Asegúrate de que todas las variables de entorno estén configuradas
+- Revisa que `main.py` exporta la variable `app` a nivel de módulo
 
 **Error de base de datos**
-- Verifica que `DATABASE_URL` sea correcta
+- Verifica que `DATABASE_URL` sea correcta y esté en formato `postgresql://` (no `postgresql+psycopg2://`)
 - Asegúrate de que la base de datos permita conexiones externas
+- El proyecto incluye conversión automática de URLs en `config.py`
+
+**Problemas con locale en producción**
+- El proyecto incluye manejo de errores para locales no disponibles
+- Se usa el locale del sistema como fallback automáticamente
 
 ## 🔒 Seguridad
 
@@ -368,19 +385,40 @@ Después del despliegue, verifica:
 - Rutas protegidas con decorador `@login_required`
 - Validación de permisos para edición/eliminación de posts
 - Variables sensibles en archivo `.env` (no versionado)
+- Configuración optimizada para entornos serverless con pool de conexiones
 
 ## 🧪 Características Adicionales
 
-- **Localización**: Fechas en español (`es_ES.UTF-8`)
+- **Localización**: Fechas en español con soporte para múltiples locales
 - **Editor rico**: CKEditor con paquete completo
 - **Gestión de imágenes**: Integración completa con Cloudinary
 - **URLs amigables**: Conversión automática de espacios a guiones
 - **Flash messages**: Notificaciones para el usuario
 - **Docker**: Contenedor PostgreSQL preconfigurado
+- **SEO optimizado**: Metadatos, favicon y estructura semántica HTML
+- **Responsive design**: Interfaz completamente adaptable a dispositivos móviles
 
 ## 📄 Licencia
 
 Este proyecto está bajo la licencia especificada en el archivo [LICENSE](LICENSE).
+
+## 📝 Notas de la Versión Actual
+
+### Cambios Recientes
+
+**v0.1.0 - Configuración para Producción**
+- ✅ Configurado para despliegue en Vercel
+- ✅ Agregado soporte para múltiples locales con fallback automático
+- ✅ Implementada conversión automática de URLs de base de datos
+- ✅ Optimizado pool de conexiones para entornos serverless
+- ✅ Agregados metadatos SEO y favicon
+- ✅ Cambiado de `psycopg2` a `psycopg2-binary` para compatibilidad con Vercel
+- ✅ Actualizado requisito de Python de 3.14 a 3.11 para mayor compatibilidad
+- ✅ Mejorada UI con botón de registro condicional
+- ✅ Agregado archivo `DEPLOYMENT.md` con guía completa de despliegue
+- ✅ Configuración de base de datos optimizada para producción
+
+Para más detalles sobre el despliegue en producción, consulta [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ---
 
