@@ -1,5 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, g
-from blogapp.db_con import db
+from flask import Blueprint, render_template, request
 from blogapp.models import User, Post
 
 

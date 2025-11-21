@@ -15,6 +15,7 @@ Una aplicación web completa para gestionar publicaciones de blog desarrollada c
 - [Modelos de Base de Datos](#modelos-de-base-de-datos)
 - [Rutas y Endpoints](#rutas-y-endpoints)
 - [Migraciones](#migraciones)
+- [Despliegue en Vercel](#despliegue-en-vercel)
 - [Licencia](#licencia)
 
 ## 📖 Descripción
@@ -244,6 +245,121 @@ flask db upgrade
 ```bash
 flask db downgrade
 ```
+
+## 🚀 Despliegue en Vercel
+
+### Archivos de configuración
+
+El proyecto incluye los archivos necesarios para el despliegue en Vercel:
+
+- **`vercel.json`**: Configuración de Vercel para Flask
+- **`requirements.txt`**: Dependencias del proyecto
+- **`.vercelignore`**: Archivos a excluir del despliegue
+
+### Pasos para desplegar
+
+1. **Instalar Vercel CLI** (opcional):
+```bash
+npm install -g vercel
+```
+
+2. **Conectar con GitHub**:
+   - Ve a [vercel.com](https://vercel.com)
+   - Conecta tu repositorio de GitHub
+   - Selecciona el proyecto Flask-BlogPosts
+
+3. **Configurar variables de entorno**:
+   En el dashboard de Vercel, ve a Settings > Environment Variables y agrega:
+   
+   ```
+   SECRET_KEY=tu_clave_secreta
+   DEBUG=False
+   DATABASE_URL=postgresql://usuario:password@host:port/database
+   CLOUDINARY_URL=cloudinary://api_key:api_secret@cloud_name
+   CRYPT_METHOD=pbkdf2:sha256
+   ```
+
+4. **Base de datos en producción**:
+   
+   Se recomienda usar servicios de PostgreSQL gestionados:
+   - **Neon** ([neon.tech](https://neon.tech)) - Gratuito, serverless
+   - **Supabase** ([supabase.com](https://supabase.com)) - Gratuito con límites
+   - **Railway** ([railway.app](https://railway.app)) - $5/mes
+   - **Heroku Postgres** - Plan gratuito disponible
+
+5. **Ejecutar migraciones**:
+   
+   Después del despliegue, ejecuta las migraciones:
+   ```bash
+   vercel env pull .env.local
+   flask db upgrade
+   ```
+
+6. **Desplegar**:
+   ```bash
+   vercel --prod
+   ```
+   
+   O simplemente haz push a la rama `main`/`master` y Vercel desplegará automáticamente.
+
+### Consideraciones importantes para producción
+
+⚠️ **Base de datos**: 
+- PostgreSQL local de Docker no es accesible desde Vercel
+- Usa un servicio de base de datos en la nube
+- Actualiza `DATABASE_URL` con la URL de producción
+
+⚠️ **Configuración de locale**:
+- Si hay problemas con `locale.setlocale`, considera usar alternativas como `babel` o manejar el error:
+```python
+try:
+    locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+except:
+    pass  # Usar locale por defecto en producción
+```
+
+⚠️ **DEBUG**:
+- Asegúrate de que `DEBUG=False` en producción
+
+⚠️ **SECRET_KEY**:
+- Genera una clave segura y única para producción:
+```python
+import secrets
+print(secrets.token_hex(32))
+```
+
+### Estructura de archivos para Vercel
+
+```
+Flask-BlogPosts/
+├── vercel.json          # Configuración de Vercel
+├── requirements.txt     # Dependencias Python
+├── .vercelignore       # Archivos a ignorar
+├── main.py             # Punto de entrada (expone 'app')
+└── ...
+```
+
+### Verificar despliegue
+
+Después del despliegue, verifica:
+- ✅ La aplicación se carga correctamente
+- ✅ Las rutas funcionan
+- ✅ La conexión a PostgreSQL funciona
+- ✅ Cloudinary carga imágenes correctamente
+- ✅ Los estilos CSS se cargan
+
+### Troubleshooting
+
+**Error: "No module named 'psycopg2'"**
+- Solución: `requirements.txt` usa `psycopg2-binary` (ya configurado)
+
+**Error: "Application failed to start"**
+- Verifica los logs en el dashboard de Vercel
+- Asegúrate de que todas las variables de entorno estén configuradas
+
+**Error de base de datos**
+- Verifica que `DATABASE_URL` sea correcta
+- Asegúrate de que la base de datos permita conexiones externas
 
 ## 🔒 Seguridad
 
