@@ -1,8 +1,10 @@
 from blogapp import create_app
 
+# Crear la aplicación Flask
+app = create_app()
+
 def main():
-    app = create_app()
-    app.run()
+    app.run(debug=True)
 
 
 if __name__ == "__main__":

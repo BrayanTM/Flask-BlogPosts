@@ -23,7 +23,12 @@ def create_app():
 
     ckeditor.init_app(app)
 
-    locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+    # Configurar locale para fechas en español (con fallback para producción)
+    try:
+        locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+    except (locale.Error, ValueError):
+        # Si el locale español no está disponible, usar el predeterminado
+        pass
 
     app.register_blueprint(home.home_bp)
     app.register_blueprint(auth.auth_bp)
