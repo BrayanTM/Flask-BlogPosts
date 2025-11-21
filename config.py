@@ -12,5 +12,17 @@ class Config:
     if database_url.startswith('postgresql+psycopg2://'):
         database_url = database_url.replace('postgresql+psycopg2://', 'postgresql://', 1)
     SQLALCHEMY_DATABASE_URI = database_url
+    
+    # Configuraciones para entornos serverless
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,
+        'pool_recycle': 300,
+        'pool_size': 2,
+        'max_overflow': 0,
+        'connect_args': {
+            'connect_timeout': 10,
+        }
+    }
 
     CKEDITOR_PKG_TYPE = 'full'
